@@ -1,0 +1,412 @@
+sqoop --options-file /home/hduser/retailorders/custoption --password-file
+/user/hduser/retailorders/root.password --boundary-query " select min(customerNumber),
+max(customerNumber) from payments " --query ' select c.customerNumber,
+upper(c.customerName),c.contactFirstName,c.contactLastName,c.phone,c.addressLine1,c.city,c.state,c.postalCod
+e,c.country ,c.salesRepEmployeeNumber,c.creditLimit ,p.checknumber,p.paymentdate,p.amount from
+customers c inner join payments p on c.customernumber=p.customernumber and year(p.paymentdate)=2020
+and month(p.paymentdate)=10 where $CONDITIONS' \
+--split-by c.customernumber --delete-target-dir --target-dir custdetails/2020-10/ --null-string 'NA' \
+--direct --num-mappers 2 --fields-terminated-by '~' --lines-terminated-by '\n'
+
+
+
+
+SELECT MIN(CUSTOMERNUMBER),
+MAX(CUSTOMERNUMBER) FROM PAYMENTS " --QUERY ' 
+
+
+SELECT C.CUSTOMERNUMBER,
+UPPER(C.CUSTOMERNAME),C.CONTACTFIRSTNAME,C.CONTACTLASTNAME,C.PHONE,C.ADDRESSLINE1,C.CITY,C.STATE,C.POSTALCOD
+E,C.COUNTRY ,C.SALESREPEMPLOYEENUMBER,C.CREDITLIMIT ,P.CHECKNUMBER,P.PAYMENTDATE,P.AMOUNT FROM
+CUSTOMERS C INNER JOIN PAYMENTS P ON C.CUSTOMERNUMBER=P.CUSTOMERNUMBER AND YEAR(P.PAYMENTDATE)=2020
+AND MONTH(P.PAYMENTDATE)=10
+
+
+customerNumber | customerName               | contactLastName | contactFirstName | phone        | addressLine1                 | addressLine2 | city      | state    | postalCode | country   |
+ salesRepEmployeeNumber | creditLimit | C
+
+customerNumber | checkNumber | paymentDate | amount  P
+
+#sqoop import --connect jdbc:mysql://localhost/custpayments  --username root --password Root123$ --boundary-query "select min(customernumber),max(customernumber) from payments" --query 'select c.customernumber,upper(c.customername),c.contactfirstname,c.contactlastname,c.phone,c.addressline1,c.city,c.state,c.postalcode,c.country,c.salesrepemployeenumber,c.creditlimit,p.checknumber,p.paymentdate,p.amount from customers c inner join payments p on c.customernumber=p.customernumber and year(p.paymentdate)=2020 and month(p.paymentdate)=10 where $CONDITIONS' --split-by c.customernumber --delete-target-dir --target-dir custdetails/2020-10/ --null-string 'NA' --direct --num-mappers 2 --fields-terminated-by '~' --lines-terminated-by '\n' #
+
+
+
+select
+o.customernumber,o.ordernumber,o.orderdate,o.shippeddate,o.status,o.comments,od.productcode,od.quantity
+ordered,od.priceeach,od.orderlinenumber,p.productCode,p.productName,p.productLine,p.productScale,p.produ
+ctVendor,p.productDescription,p.quantityInStock,p.buyPrice,p.MSRP from orders o inner join orderdetails od on
+o.ordernumber=od.ordernumber inner join products p on od.productCode=p.productCode and
+year(o.orderdate)=2020 and month(o.orderdate)=10 where $CONDITIONS
+
+
+orderNumber    | int         | NO   | PRI | NULL    |       |              
+| orderDate      | date        | NO   |     | NULL    |       | o
+| requiredDate   | date        | NO   |     | NULL    |       |
+| shippedDate    | date        | YES  |     | NULL    |       |
+| status         | varchar(15) | NO   |     | NULL    |       |
+| comments       | text        | YES  |     | NULL    |       |
+| customerNumber
+
+ orderNumber     | int           | NO   | PRI | NULL    |       |
+| productCode     | varchar(15)   | NO   | PRI | NULL    |       |od
+| quantityOrdered | int           | NO   |     | NULL    |       |
+| priceEach       | decimal(10,2) | NO   |     | NULL    |       |
+| orderLineNumber | smallint      | NO   |     | NULL    |       |
+
+
+ productCode        | varchar(15)   | NO   | PRI | NULL    |       |
+| productName        | varchar(70)   | NO   |     | NULL    |       |
+| productLine        | varchar(50)   | NO   | MUL | NULL    |       |
+| productScale       | varchar(10)   | NO   |     | NULL    |       |
+| productVendor      | varchar(50)   | NO   |     | NULL    |       |p
+| productDescription | text          | NO   |     | NULL    |       |
+| quantityInStock    | smallint      | NO   |     | NULL    |       |
+| buyPrice           | decimal(10,2) | NO   |     | NULL    |       |
+| MSRP               | decimal(10,2) | NO   |     | NULL    |       
+
+sqoop import --connect jdbc:mysql://localhost/ordersproducts --username root --password Root123$ --boundary-query "select min(customernumber),max(customernumber) from orders" --query 'select o.customernumber,o.ordernumber,o.orderdate,o.shippeddate,o.status,o.comments,od.quantityordered,od.priceeach,od.orderlinenumber,p.productcode,p.productname,p.productline,p.productscale,p.productvendor,p.productdescription,
+p.quantityinstock,p.buyprice,p.msrp from orders o inner join orderdetails od on o.ordernumber=od.ordernumber inner join products p on od.productcode=p.productcode and year(o.orderdate)=2020 and month(o.orderdate)=10 where $CONDITIONS' --split-by o.customernumber --delete-target-dir --target-dir orderdetails/2020-10 --null-string 'NA' --direct --num-mappers 4 --fields-terminated-by '~' --lines-terminated-by '\n'
+#while selecting two columns with same name we have to differentiate with some upper or lower case 
+
+
+
+sqoop --options-file /home/hduser/retailorders/ordersoption --password-file
+/user/hduser/retailorders/root.password 
+--boundary-query "select min(customerNumber),
+max(customerNumber) from orders" --query 'select
+o.customernumber,o.ordernumber,o.orderdate,o.shippeddate,o.status,o.comments,od.productcode,od.quantity
+ordered,od.priceeach,od.orderlinenumber,p.productCode,p.productName,p.productLine,p.productScale,p.produ
+ctVendor,p.productDescription,p.quantityInStock,p.buyPrice,p.MSRP from orders o inner join orderdetails od on
+o.ordernumber=od.ordernumber inner join products p on od.productCode=p.productCode and
+year(o.orderdate)=2020 and month(o.orderdate)=10 where $CONDITIONS' \
+--split-by o.customernumber --delete-target-dir --target-dir orderdetails/2020-10/ --null-string 'NA' \
+--direct --num-mappers 4 --fields-terminated-by '~' --lines-terminated-by '\n';
+
+#joined 3 tables orders database
+
+
+custdetails_raw(maintable) from proretail database
+no                  	int                 	                    
+cname               	string              	                    
+fname               	string              	                    
+lname               	string              	                    
+phone               	bigint              	                    
+add1                	string              	                    
+city                	string              	                    
+state               	string              	                    
+postal              	string              	                    
+country             	string              	                    
+salesrepno          	string              	                    
+creditlimit         	string              	                    
+checkno             	string              	                    
+paymentdate         	date                	                    
+checkamt            	string 
+
+ 
+custcure insert into 
+select no,cname,concat(fname,'',lname),named_struct('add1',add1,'city',city,'state',state,'postal',postal,'country',country,'phone',phone),creditlimit,checkno,checkamt,paymentdate from custdetails_raw 
+
+create table custcurated(cno string,cname string, fullname string,add1 struct<add1:string,city:string,state:string,postal:string,country:string,phone:bigint>,creditlimit string,checkno string,checkamount string,paymentdate date) row format delimited fields terminated by '~' stored as textfile
+
+select coalesce(no,0),cname,
+concat(fname, ' ', lname) , named_struct('add1', add1, 'city', city, 'state',
+state, 'postal', postal, 'country', country, 'phone',phone), round(creditlimit),
+CONCAT(REGEXP_EXTRACT( checknumber ,'[A-Z]+', 0), '-',REGEXP_EXTRACT( checknumber ,'[0-9]+',
+0)),round(checkamt),coalesce(paymentdate,current_date) from retailstg.custdetails_raw
+
+HQ336336
+JM555205
+OM314933
+BO864823
+HQ55022
+
+CONCAT(REGEXP_EXTRACT( HQ ,'[A-Z]+', 0), '-',REGEXP_EXTRACT( HQ ,'[0-9]+',
+0))
+
+concat (hq)
+336336
+HQ-0
+
+insert overwrite table custcurated select coalesce(no,0),cname,concat(fname,'',lname),named_struct('add1',add1,'city',city,'state',state,'postal',postal,'country',country,'phone',phone),round(creditlimit),
+concat(regexp_extract(checkno,'[A-Z]+',0),'-',regexp_extract(checkno,'[0-9]+',0)),round(checkamt),coalesce(paymentdate,current_date) from proretail.custdetails_raw;
+
+#####starting partitioning and bucketing
+
+create external table ext1(cno string,cname string,fullname string,add1 struct<add1:string,city:string,state:string,postal:string,country:string,phone:bigint>,creditlimit string,checkno string,checkamt string)
+partitioned by (paymentdate date) clustered by (cno) into 3 buckets row format delimited fields terminated by '~' collection items terminated by '$' stored as textfile location '/user/hduser/custord/custbuck';
+
+##inserting data frm proretail.custcure
+
+col_name	data_type	comment
+cno                 	string              	                    
+cname               	string              	                    
+cfullname           	string              	                    
+add                 	struct<add1:string,city:string,state:string,postal:string,country:string,phone:bigint>	                    
+creditlimit         	string              	                    
+checkno             	string              	                    
+checkamt            	string              	                    
+paymentdate         	date  
+
+insert into ext1 partition(paymentdate)
+select cno,cname,cfullname,add,creditlimit,checkno,checkamt,paymentdate from proretail.custcure;  
+
+##creating 2nd ext table as ext2 and inserting data from proretail.orderaw table
+
+create external table ext2 (cno string,ono string,shipdate date,status string,comments string,productcode string,quantity string,priceeach string,orderline string,productname string,productline string,productscale string,productvendor string,productdesc string,quantityinstock string,buyprice string,msrp string) partitioned by (orderdate date) clustered by (cno) into 3 buckets row format delimited fields terminated by '~' collection items terminated by '$'
+stored as textfile location '/user/hduser/custord/ordbuck';
+
+col_name	data_type	comment
+no                  	string              	                    
+ono                 	string              	                    
+odate               	date                	                    
+shipdate            	date                	                    
+status              	string              	                    
+comments            	string              	                    
+quantity            	string              	                    
+priceeach           	string              	                    
+orderline           	int                 	                    
+productcode         	string              	                    
+productname         	string              	                    
+productline         	string              	                    
+productscale        	string              	                    
+productvendor       	string              	                    
+productdesc         	string              	                    
+quantityinstock     	string              	                    
+buyprice            	string              	                    
+msrp                	string 
+
+insert overwrite table ext2 partition(orderdate) select no,ono,shipdate,status,comments,productcode,quantity,priceeach,orderline,productname,productline,productscale,productvendor,productdesc,quantityinstock,buyprice,msrp,odate from proretail.orderaw;
+
+
+###only partitioning above table 
+
+create external table extorc(cno string,cname string,fullname string,add1 struct<add1:string,city:string,state:string,postal:string,country:string,phone:bigint>,creditlimit string,checkno string,checkamt string)
+partitioned by (paymentdate date)  row format delimited fields terminated by '~' collection items terminated by '$' stored as orc location '/user/hduser/custordpart/custpart';
+
+inserting data
+
+insert into extorc partition(paymentdate)
+select cno,cname,cfullname,add,creditlimit,checkno,checkamt,paymentdate from proretail.custcure;  
+
+##2nd table
+
+create external table extorc1 (cno string,ono string,shipdate date,status string,comments string,productcode string,quantity string,priceeach string,orderline string,productname string,productline string,productscale string,productvendor string,productdesc string,quantityinstock string,buyprice string,msrp string) partitioned by (orderdate date) row format delimited fields terminated by '~' collection items terminated by '$'
+stored as orc location '/user/hduser/custordpart/ordpart';
+
+inserting data
+
+insert overwrite table extorc1 partition(orderdate) select no,ono,shipdate,status,comments,productcode,quantity,priceeach,orderline,productname,productline,productscale,productvendor,productdesc,quantityinstock,buyprice,msrp,odate from proretail.orderaw;
+
+####CREATING EXTERNAL TABLE BY JOINING THE TWO TABLE WHICH IS PARTITIONED AND BUCKETED
+
+cno                 	string              	                    
+cname               	string              	                    
+fullname            	string              	                    
+add1                	struct<add1:string,city:string,state:string,postal:string,country:string,phone:bigint>	                    
+creditlimit         	string              	                    
+checkno             	string              	                    
+checkamt            	string              	                    
+paymentdate         	date                	                    
+	 	 
+# Partition Information	 	 
+# col_name            	data_type           	comment             
+	 	 
+paymentdate         	date  
+
+
+cno                 	string              	                    
+ono                 	string              	                    
+shipdate            	date                	                    
+status              	string              	                    
+comments            	string              	                    
+productcode         	string              	                    
+quantity            	string              	                    
+priceeach           	string              	                    
+orderline           	string              	                    
+productname         	string              	                    
+productline         	string              	                    
+productscale        	string              	                    
+productvendor       	string              	                    
+productdesc         	string              	                    
+quantityinstock     	string              	                    
+buyprice            	string              	                    
+msrp                	string              	                    
+orderdate           	date                	                    
+	 	 
+# Partition Information	 	 
+# col_name            	data_type           	comment             
+	 	 
+
+create external table final (cno string,cname string,fullname string,phone bigint,creditlimit string,checkno string,checckamt string,ono string,shipdate date,status string,comments string,productcode string,quantity string,priceeach string,orderline string,productname string,productline string,productscale string,productvendor string,productdesc string,quantityinstock string,buyprice string,msrp string,odate date) partitioned by (paymentdate date) row format delimited fields terminated by '~' stored as orc location '/user/hduser/custorder/custorderfinal/';
+
+insert into final partition(paymentdate) select c.cno,c.cname,c.fullname,c.add1.phone,c.creditlimit,c.checkno,c.checkamt,o.ono,o.shipdate,o.status,o.comments,o.productcode,o.quantity,o.priceeach,o.orderline,o.productname,o.productline,o.productscale,
+o.productvendor,o.productdesc,o.quantityinstock,o.buyprice,o.msrp,o.orderdate,c.paymentdate from retail_curated.ext1 c inner join retail_curated.ext2 o on c.cno=o.cno;
+
+create index idx_final on table final(phone) AS
+'org.apache.hadoop.hive.ql.index.compact.CompactIndexHandler' WITH DEFERRED REBUILD;
+
+####FRUSTRUATION DATA########
+
+hadoop fs -mkdir -p /user/hduser/retailorders/dimorders
+dfs -put -f /home/hduser/retailorders/orders_rate.csv /user/hduser/retailorders/dimorders/orders_rate.csv
+
+create table orderate (id int,desc string,cc string,severity string,intent string) row format delimited fields terminated by ',' location '/user/hduser/retailorders/dimorders';
+
+
+
+create table navi (cno string,comments string,pagenavigation array<string>,pageidx array<int>) row format delimited fields terminated by ',' collection items terminated by '$';
+
+load data local inpath '/home/hduser/retailorders/cust_visits.csv' into table navi;
+
+
+creating another table to insert posexploded data 
+
+create table navidisc (cno string,pageidx int,pagenavigation string) row format delimited fields terminated by ',' location '/user/hduser/custnavi';
+
+select cno,idx,navi from proretail.navi lateral view posexplode(pagenavigation) view as idx,navi;
+
+###BIGQUERY
+select c1.navigation_pg,count(distinct c1.customernumber) custcnt,'last pagevisited' pagevisit
+from retail_discovery.cust_navigation c1 inner join (select a.customernumber,max(a.navigation_index) as
+maxnavigation from retail_discovery.cust_navigation a group by a.customernumber) as c2 on
+(c1.customernumber=c2.customernumber and c1.navigation_index=c2.maxnavigation) group by
+c1.navigation_pg
+union all
+select navigation_pg,count(distinct customernumber) custcnt,'first pagevisited' pagevisit
+from retail_discovery.cust_navigation
+where navigation_index=0
+group by navigation_pg;
+
+select a.pagenavigation,count(distinct a.cno) custsnt,'last pagevisited' pagevisit from navidisc a inner join (select b.cno,max(b.pageidx) as maxnavigation from navidisc b group by b.cno ) as b on
+(a.cno=b.cno and a.pageidx=b.maxnavigation) group by a.pagenavigation union all select pagenavigation,count(distinct cno) custcnt, 'first pagevisited' pagevisit from navidisc where pageidx=0 group by pagenavigation
+
+op:
+
+_u1.pagenavigation	_u1.custsnt	_u1.pagevisit
+google-search	5	first pagevisited
+home	46	first pagevisited
+exit	46	last pagevisited
+order	1	last pagevisited
+
+
+select pagenavigation,count(distinct cno) custcnt, 'first pagevisited' pagevisit from navidisc where pageidx=0 group by pagenavigation
+
+select cno,max(pageidx) as maxnavigation from navidisc group by cno 
+
+most visited page
+
+select pagenavigation,count(cno) as cnt from navidisc group by pagenavigation order by cnt desc ;
+
+
+
+
+insert overwrite table retail_discovery.cust_frustration_level select customernumber,total_siverity,case when
+total_siverity between -10 and -3 then 'highly frustrated' when total_siverity between -2 and -1 then 'low
+frustrated' when total_siverity = 0 then 'neutral' when total_siverity between 1 and 2 then 'happy' when
+total_siverity between 3 and 10 then 'overwhelming' else 'unknown' end as customer_frustration_level from (
+select customernumber,sum(siverity) as total_siverity from ( select
+o.customernumber,o.comments,r.orddesc,siverity from retailstg.cust_navigation o left outer join
+retail_discovery.dim_order_rate r where o.comments like concat('%',r.orddesc,'%')) temp1
+group by customernumber) temp2;
+
+select
+o.custom,o.comments,r.orddesc,siverity from retailstg.cust_navigation o left outer join
+retail_discovery.dim_order_rate r where o.comments like concat('%',r.orddesc,'%'
+
+select n.cno,n.comments,o.desc,o.severity from proretail.navi n left outer join orderate o where n.comments like concat('%',o.desc,'%')
+
+select cno,total,case when total between -10 and -3 then 'highly frustruated' when total between -2 and -1 then 'low frustruated' when total=0 then 'neutral' when total between 1 and 2 then 'happy' when total between 3 and 10 then 'overwhelming' else 'unknown' end as cust_frust from (select cno,sum(severity)as total from (select n.cno,n.comments,o.desc,o.severity from proretail.navi n left outer join orderate o where n.comments like concat('%',o.desc,'%')) temp1 group by cno) temp2;
+
+#DESCRIPTION - left joining the table and taking cno ,comments,description ,sverity from orderate table and taking sum and cno from that table after that giving frustruation level with help of case statement
+
+select cno,sum(severity)as total from (select n.cno,n.comments,o.desc,o.severity from proretail.navi n left outer join orderate o where n.comments like concat('%',o.desc,'%')) group by cno)
+
+select n.cno,n.comments,o.desc,o.severity from proretail.navi n left outer join orderate o where n.comments like concat('%',o.desc,'%') group by n.cno
+
+######CREATING TABLE FOR FRUSTRATION
+
+create external table frust (cno string, total string,frustlevel string) row format delimited fields terminated by ',' location '/user/hduser/custfrust';
+
+select splitwords,count(*) as cnt from (select cno,words as splitwords from navi lateral view explode(split(comments,' ')) w as words) as q1  where upper(splitwords)not in (select upper(word) from stop) group by splitwords order by  cnt desc;
+
+###exporting using sqoop the frust data
+create database cust_report;
+
+mysql> create table cust_frust (cno varchar(100),total_severity float,frust_level varchar(200));
+
+sqoop export --connect jdbc:mysql://localhost/cust_report --username root --password Root123$ --table cust_frust --export-dir /user/hduser/custfrust/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
