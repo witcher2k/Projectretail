@@ -1,2 +1,2 @@
-A Retail project data only using hive
+A Retail project only using hive and sqoop
 **Datacleaning,DataPipeline,Import,Export,Shellscript**
